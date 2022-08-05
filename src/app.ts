@@ -5,23 +5,48 @@ import Ajv, { JSONSchemaType } from 'ajv';
 import path from 'path';
 import { promises as fs } from 'fs';
 
-const resolutions = [
-	'UHD',
-	'1920x1200',
-	'1920x1080',
-	'1366x768',
-	'1280x768',
-	'1024x768',
-	'800x600',
-	'800x480',
-	'768x1280',
-	'720x1280',
-	'640x480',
-	'480x800',
-	'400x240',
-	'320x240',
-	'240x320',
-] as const;
+const resolutions = ['4k', '2k', '1080p', '720p', '480p'] as const;
+
+const resolutionSizeMap = {
+	'4k': {
+		w: 3840,
+		h: 2160,
+	},
+	'2k': {
+		w: 2560,
+		h: 1440,
+	},
+	'1080p': {
+		w: 1920,
+		h: 1080,
+	},
+	'720p': {
+		w: 1280,
+		h: 720,
+	},
+	'480p': {
+		w: 640,
+		h: 480,
+	},
+} as const;
+
+// const resolutions = [
+// 	'UHD',
+// 	'1920x1200',
+// 	'1920x1080',
+// 	'1366x768',
+// 	'1280x768',
+// 	'1024x768',
+// 	'800x600',
+// 	'800x480',
+// 	'768x1280',
+// 	'720x1280',
+// 	'640x480',
+// 	'480x800',
+// 	'400x240',
+// 	'320x240',
+// 	'240x320',
+// ] as const;
 
 type QuerystringType = {
 	resolution?: typeof resolutions[number];
@@ -41,7 +66,7 @@ const querystringSchema: JSONSchemaType<QuerystringType> = {
 			type: 'string',
 			nullable: true,
 			enum: resolutions,
-			default: '1920x1080',
+			default: '1080p',
 		},
 		w: {
 			type: 'integer',
@@ -97,7 +122,7 @@ const getImageByIndex = (data: ImageType[], index: number) => {
 	const len = data.length;
 
 	if (index >= len) {
-		throw new Error(`Out of range, max is ${len - 1}`);
+		throw new Error(`Out of 'index' range!`);
 	}
 
 	if (index < 0) {
@@ -111,7 +136,7 @@ const getImageByDate = (data: ImageType[], date: string) => {
 	const image = data.find((item) => item.startdate === date);
 
 	if (!image) {
-		throw new Error(`Out of date`);
+		throw new Error(`Out of 'date' range!`);
 	}
 
 	return image;
@@ -124,6 +149,10 @@ const getImageRandom = (data: ImageType[]) => {
 	return getImageByIndex(data, idx);
 };
 
+const isNumber = (v: any) => {
+	return typeof v === 'number' && !Number.isNaN(v);
+};
+
 export const createApp = (options: FastifyServerOptions = {}) => {
 	const app = Fastify({
 		ignoreTrailingSlash: true,
@@ -134,7 +163,7 @@ export const createApp = (options: FastifyServerOptions = {}) => {
 	app.register(sensible);
 
 	app.get(
-		'/api',
+		'/v1',
 		{
 			schema: {
 				querystring: querystringSchema,
@@ -152,8 +181,8 @@ export const createApp = (options: FastifyServerOptions = {}) => {
 
 			let image: ImageType & { url?: string };
 
-			if (typeof index === 'number') {
-				image = getImageByIndex(data, index);
+			if (isNumber(index)) {
+				image = getImageByIndex(data, index!);
 			} else if (date) {
 				image = getImageByDate(data, date);
 			} else if (rand === true) {
@@ -162,8 +191,12 @@ export const createApp = (options: FastifyServerOptions = {}) => {
 				image = getImageByIndex(data, 0);
 			}
 
+			if (!isNumber(params.h) && !isNumber(params.w) && resolution) {
+				Object.assign(params, resolutionSizeMap[resolution]);
+			}
+
 			const search = new URLSearchParams(params as any).toString();
-			const url = `${BASE_URL}${image.urlbase}_${resolution}.jpg` + (search ? `&${search}` : '');
+			const url = `${BASE_URL}${image.urlbase}_UHD.jpg&${search}`;
 
 			console.log('url: ', url);
 
