@@ -1,0 +1,27 @@
+{
+	"name": "bing-wallpaper",
+	"version": "1.0.0",
+	"repository": "git@github.com:zenghongtu/bing-wallpaper.git",
+	"author": "zenghongtu <zenghongtu@gmail.com>",
+	"license": "MIT",
+	"private": true,
+	"scripts": {
+		"build": "rm -fr dist && tsc",
+		"dev": "tsx watch src/index.ts",
+		"start": "tsx src/index.ts",
+		"update-data": "tsx ./scripts/update-data.ts"
+	},
+	"devDependencies": {
+		"@types/node": "^18.6.3",
+		"@vercel/node": "^2.5.3",
+		"node-fetch": "^3.2.10",
+		"tsx": "^3.8.0",
+		"typescript": "^4.7.4"
+	},
+	"dependencies": {
+		"@fastify/cors": "^8.1.0",
+		"@fastify/sensible": "^5.1.0",
+		"ajv": "^8.11.0",
+		"fastify": "^4.3.0"
+	}
+}
