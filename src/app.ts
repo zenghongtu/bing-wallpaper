@@ -163,7 +163,7 @@ export const createApp = (options: FastifyServerOptions = {}) => {
 	app.register(sensible);
 
 	app.get(
-		'/v1',
+		'/api',
 		{
 			schema: {
 				querystring: querystringSchema,
