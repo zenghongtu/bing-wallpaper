@@ -42,11 +42,11 @@ The response format, can be `json`. **If not set, it will be redirected to the w
 
 #### index
 
-The index of wallpaper, starts from 0. By default, `0` means to get today's image, `1` means to get the image of yesterday, and so on. Or you can specify it as `random` to choose a random index.
+The index of wallpaper, starts from 0. By default, `0` means to get today's image, `1` means to get the image of yesterday, and so on. Negative number is reverse sort, `-1` will get the earliest wallpaper. Or you can specify it as `random` to choose a random index.
 
 #### date
 
-Get wallpaper by date, from `20200314` to today.
+Get wallpaper by date, from `20170101` to today (format is `YYYYMMDD`).
 
 #### w
 
