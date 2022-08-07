@@ -2,9 +2,9 @@
 
 A RESTful API for Bing wallpaper to use easy.
 
-<img width="830" src="https://bingw.jasonzeng.dev/?w=830"/>
+<img width="800" src="https://bingw.jasonzeng.dev/?w=800"/>
 
-> `<img src="https://bingw.jasonzeng.dev/?w=830"/>`
+> `<img src="https://bingw.jasonzeng.dev/?w=800"/>`
 
 ## Usage
 
