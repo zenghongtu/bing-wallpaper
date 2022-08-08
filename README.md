@@ -46,7 +46,7 @@ The index of wallpaper, starts from 0. By default, `0` means to get today's imag
 
 #### date
 
-Get wallpaper by date, from `20170101` to today (format is `YYYYMMDD`).
+Get wallpaper by date, from `20190309` to today (format is `YYYYMMDD`).
 
 #### w
 
