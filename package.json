@@ -6,7 +6,7 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
-		"build": "rm -fr dist && tsc",
+		"build": "mkdir -p public && rm -fr dist && tsc",
 		"dev": "tsx watch src/index.ts",
 		"start": "tsx src/index.ts",
 		"update-data": "tsx ./scripts/update-data.ts"
