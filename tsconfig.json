@@ -101,5 +101,5 @@
 		"skipLibCheck": true /* Skip type checking all .d.ts files. */
 	},
 	"include": ["src/**/*"],
-	"exclude": ["vercel.ts"]
+	"exclude": ["node_modules", "dist", "api"]
 }

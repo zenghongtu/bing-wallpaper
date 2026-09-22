@@ -3,7 +3,7 @@ import cors from '@fastify/cors';
 import sensible from '@fastify/sensible';
 import { JSONSchemaType } from 'ajv';
 import path from 'path';
-import { promises as fs } from 'fs';
+import fsSync, { promises as fs } from 'fs';
 
 const resolutions = [
 	'UHD',
@@ -93,7 +93,33 @@ interface ImageType {
 
 const BASE_URL = 'https://www.bing.com';
 
-const dataFilePath = path.join(__dirname, '..', 'json', 'data.json');
+const getDataFilePath = (): string => {
+	const candidates = [
+		path.join(process.cwd(), 'json', 'data.json'),
+		path.join(__dirname, '..', 'json', 'data.json'),
+		path.join(__dirname, 'json', 'data.json'),
+	];
+
+	for (const candidate of candidates) {
+		if (fsSync.existsSync(candidate)) {
+			return candidate;
+		}
+	}
+
+	return candidates[0];
+};
+
+let cachedData: ImageType[] | null = null;
+const loadData = async (): Promise<ImageType[]> => {
+	if (cachedData) {
+		return cachedData;
+	}
+
+	const dataFilePath = getDataFilePath();
+	const content = await fs.readFile(dataFilePath, 'utf8');
+	cachedData = JSON.parse(content);
+	return cachedData!;
+};
 
 const getImageByIndex = (data: ImageType[], index: number) => {
 	const len = data.length;
@@ -157,7 +183,7 @@ export const createApp = (options: FastifyServerOptions = {}) => {
 		) => {
 			const { date, index, format, resolution, ...params } = request.query;
 
-			const data = JSON.parse(await fs.readFile(dataFilePath, 'utf8'));
+			const data = await loadData();
 
 			let image: ImageType & { url?: string };
 
@@ -179,7 +205,7 @@ export const createApp = (options: FastifyServerOptions = {}) => {
 				return { ...image, url };
 			}
 
-			return reply.redirect(307, url);
+			return reply.code(307).redirect(url);
 		}
 	);
 
